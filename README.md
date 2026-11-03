@@ -30,8 +30,21 @@ print(doc.content)
 print(doc.metadata)
 ```
 
-### Tests
+## Milestone 2: Chunking Engine
 
-```bash
-pytest
+### Strategies
+- fixed: token-based fixed size with overlap
+- recursive: separator-based recursive splitting
+
+### Usage
+
+```python
+from retrieval_stack.chunking import ChunkConfig, ChunkingService
+
+cfg = ChunkConfig(chunk_size=200, chunk_overlap=20)
+svc = ChunkingService(cfg, strategy="recursive")
+chunks = svc.chunk_document(doc)
 ```
+
+### Tests
+pytest
