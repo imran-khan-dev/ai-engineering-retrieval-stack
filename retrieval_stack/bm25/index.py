@@ -11,8 +11,9 @@ from retrieval_stack.chunking.models import Chunk
 from .tokenizer import Tokenizer
 
 
-@dataclass
+@dataclass 
 class InvertedIndex:
+    # store in memory
     tokenizer: Tokenizer
     chunks: Dict[str, Chunk] = field(default_factory=dict)
     term_to_chunks: Dict[str, set] = field(default_factory=lambda: defaultdict(set))
@@ -32,9 +33,8 @@ class InvertedIndex:
         for term, freq in tf.items():
             self.term_to_chunks[term].add(chunk.id)
             self.term_freq[term][chunk.id] = freq
-        for term in tf:
             self.doc_freq[term] = self.doc_freq.get(term, 0) + 1
-        self.total_docs = len(self.chunks)
+        self.total_docs = len(self.chunks) 
         self._recompute_avg()
 
     def _recompute_avg(self):
@@ -50,5 +50,6 @@ class InvertedIndex:
     def get_candidates(self, query_tokens: list[str]) -> set:
         result = set()
         for t in set(query_tokens):
+            # |= assigning to result
             result |= self.term_to_chunks.get(t, set())
         return result

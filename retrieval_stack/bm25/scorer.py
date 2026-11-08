@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import math
 
-
 class BM25Scorer:
     def __init__(self, k1: float = 1.5, b: float = 0.75):
         if k1 <= 0:
@@ -27,7 +26,7 @@ class BM25Scorer:
             if tf == 0:
                 continue
             df = index.doc_freq.get(term, 0)
-            idf = self.idf(n, df)
+            idf = self.idf(n, df)   # IDF — Rare words get higher scores
             denom = tf + self.k1 * (1 - self.b + self.b * (dl / avgdl))
             total += idf * (tf * (self.k1 + 1)) / denom
         return total

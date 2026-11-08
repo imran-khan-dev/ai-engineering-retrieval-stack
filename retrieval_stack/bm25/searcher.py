@@ -21,12 +21,16 @@ class BM25Searcher:
         if not tokens:
             return []
         candidates = self.index.get_candidates(tokens)
+
         results = []
+
         for cid in candidates:
-            score = self.scorer.score(self.index, tokens, cid)
+            score = self.scorer.score(self.index, tokens, cid) # provides score to every chunk from candidates.
             if score <= 0:
                 continue
             chunk = self.index.chunks[cid]
             results.append(SearchResult(chunk_id=cid, document_id=chunk.document_id, score=score, chunk=chunk, metadata=dict(chunk.metadata)))
+        
         results.sort(key=lambda r: r.score, reverse=True)
+
         return results[:top_k]
