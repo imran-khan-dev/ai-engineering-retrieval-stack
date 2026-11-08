@@ -46,13 +46,5 @@ svc = ChunkingService(cfg, strategy="recursive")
 chunks = svc.chunk_document(doc)
 ```
 
-## Milestone 3: BM25 Search Engine
-
-### Usage
-```python
-from retrieval_stack.bm25 import InvertedIndex, BM25Searcher
-idx = InvertedIndex(tokenizer=... )
-idx.build(chunks)
-searcher = BM25Searcher(idx)
-results = searcher.search("query", top_k=5)
-```
+### Tests
+pytest
