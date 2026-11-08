@@ -46,5 +46,15 @@ svc = ChunkingService(cfg, strategy="recursive")
 chunks = svc.chunk_document(doc)
 ```
 
-### Tests
-pytest
+## Milestone 4: Dense Vector Search
+
+Uses sentence-transformers (all-MiniLM-L6-v2) via an injectable embedding provider. In-memory vector index and cosine similarity.
+
+```python
+from retrieval_stack.dense import VectorIndex, DenseSearcher
+idx = VectorIndex()
+idx.build(chunks, embeddings)
+searcher = DenseSearcher(idx, embedder)
+results = searcher.search("query", top_k=5)
+```
+
