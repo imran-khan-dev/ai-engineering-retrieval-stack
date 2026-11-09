@@ -20,8 +20,9 @@ class DenseSearcher:
             return []
         qvec = self.embedder.embed(query)
         results = []
+        embeddings = self.index.embeddings()
         for cid, chunk in self.index.items():
-            emb = self.index.embeddings()[cid]
+            emb = embeddings[cid]
             score = cosine_similarity(qvec, emb)
             results.append((cid, chunk, score))
         results.sort(key=lambda x: (-x[2], x[0]))
