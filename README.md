@@ -58,3 +58,12 @@ results = h.search("query", top_k=5, bm25_top_k=20, dense_top_k=20)
 
 Example: BM25 `[A,B]`, Dense `[B,C]` with k=60 → `B=1/62+1/61`, `A=1/61`, `C=1/62`.
 
+## Milestone 6: Cross-Encoder Reranking
+
+Reranks hybrid candidates by scoring (query, chunk) pairs with a cross-encoder (`cross-encoder/ms-marco-MiniLM-L-6-v2` default). Scores are relevance scores/logits (not probabilities). Provider is injectable for tests.
+
+```python
+from retrieval_stack.reranking import Reranker, SentenceTransformerCrossEncoder
+reranker = Reranker(SentenceTransformerCrossEncoder())
+reranked = reranker.rerank("query", hybrid_results, top_k=5, candidate_count=20)
+```
