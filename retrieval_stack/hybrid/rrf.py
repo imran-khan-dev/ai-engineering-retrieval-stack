@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Iterable, Sequence
+from typing import Sequence
 
 from retrieval_stack.chunking.models import Chunk
 
@@ -20,10 +20,10 @@ def reciprocal_rank_fusion(
         raise ValueError("source_names length must match ranked_lists")
     names = list(source_names) if source_names is not None else [f"source_{i}" for i in range(len(ranked_lists))]
 
-    scores: dict[str, float] = {}
-    chunks: dict[str, Chunk] = {}
-    ranks: dict[str, dict[str, int]] = {}
-    sources: dict[str, list[str]] = {}
+    scores: dict[str, float] = {} # e.g {"A": 0.03252}
+    chunks: dict[str, Chunk] = {} # e.g {"A": chunk_object_A}
+    ranks: dict[str, dict[str, int]] = {} # e.g {"A": {"bm25": 1, "dense": 2}}
+    sources: dict[str, list[str]] = {} # e.g {"A": ["bm25", "dense"]}
 
     for name, results in zip(names, ranked_lists):
         seen: set[str] = set()
@@ -37,13 +37,17 @@ def reciprocal_rank_fusion(
                 continue
             seen.add(chunk_id)
             rank += 1
+            
             scores[chunk_id] = scores.get(chunk_id, 0.0) + 1.0 / (k + rank)
+
             chunks.setdefault(chunk_id, chunk)
             ranks.setdefault(chunk_id, {})[name] = rank
+
             if name not in sources.setdefault(chunk_id, []):
                 sources[chunk_id].append(name)
 
     combined = []
+
     for chunk_id, score in scores.items():
         chunk = chunks[chunk_id]
         combined.append(
@@ -58,5 +62,7 @@ def reciprocal_rank_fusion(
             )
         )
 
-    combined.sort(key=lambda r: (-r.rrf_score, r.chunk_id))
+    # sort the hybrid search results by RRF score, highest first. 
+    # If two results have the same score, sort by chunk ID.
+    combined.sort(key=lambda r: (-r.rrf_score, r.chunk_id)) 
     return combined
