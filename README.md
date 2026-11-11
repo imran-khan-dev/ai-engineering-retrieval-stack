@@ -85,3 +85,21 @@ response = pipeline.search(
 - Indexing: ingest -> chunk -> stage BM25/vector builds and batch embeddings -> atomic swap on success.
 - Querying: hybrid search over existing indexes -> rerank candidates -> return `SearchResponse`.
 - Repeated searches reuse indexes and do not regenerate document embeddings (query embedding only). In-memory only.
+
+## Milestone 8: Retrieval Evaluation Framework
+
+Measures retrieval quality with human-provided (ground-truth) relevance judgments (graded) using Precision@K, Recall@K, MRR, and NDCG@K. Evaluates BM25, Dense, Hybrid, and Hybrid+Reranking over the same queries/K; metrics use ranking positions and chunk IDs only (no mixing of raw scores). Example judgments are illustrative, not experimentally validated.
+
+```python
+from retrieval_stack.evaluation import EvaluationDataset, EvaluationQuery, evaluate_pipeline, comparison_table, export_report_json
+
+dataset = EvaluationDataset(queries=[
+    EvaluationQuery(query_id="q1", query_text="reset password", relevance_judgments={"C1": 3, "C3": 1}),
+])
+report = evaluate_pipeline(pipeline, dataset, k_values=[5])
+print(comparison_table(report, 5))
+export_report_json(report, "eval.json")
+```
+
+Edge cases: invalid/non-positive K raises; no relevant judgments -> recall 0; ideal DCG 0 -> NDCG 0; empty results score 0 where applicable. Small manual benchmarks are limited and may not generalize.
+

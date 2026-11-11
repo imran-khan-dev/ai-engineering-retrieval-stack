@@ -35,6 +35,7 @@ class RetrievalPipeline:
             self.reranker = reranker
         else:
             self.reranker = Reranker(reranker)
+
         self.bm25_tokenizer = bm25_tokenizer or BM25Tokenizer()
 
         self.chunks: list[Chunk] = []
@@ -67,8 +68,10 @@ class RetrievalPipeline:
                 new_chunks.append(ch)
 
         texts = [c.content for c in new_chunks]
+
         if self.embedder is None:
             raise ValueError("embedder is required for indexing")
+        
         embeddings = self.embedder.embed_batch(texts) if texts else []
 
         bm25_index = InvertedIndex(tokenizer=self.bm25_tokenizer)
@@ -76,13 +79,14 @@ class RetrievalPipeline:
         bm25_index.build(new_chunks)
         vector_index.build(new_chunks, embeddings)
 
-        # Atomic swap: only replace state after all steps succeed.
+        # Only replace state after all steps succeed.
         self.chunks = list(new_chunks)
         self.bm25_index = bm25_index
         self.vector_index = vector_index
         self.bm25_searcher = BM25Searcher(self.bm25_index)
         self.dense_searcher = DenseSearcher(self.vector_index, self.embedder)
         self.hybrid_searcher = HybridSearcher(self.bm25_searcher, self.dense_searcher)
+        
         return list(self.chunks)
 
     def search(
