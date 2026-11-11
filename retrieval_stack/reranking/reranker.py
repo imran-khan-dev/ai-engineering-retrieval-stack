@@ -21,21 +21,21 @@ class Reranker:
             return []
         items = list(candidates)
         if candidate_count is not None:
-            items = items[:candidate_count] 
+            items = items[:candidate_count]
        
         texts = []
         for item in items:
             chunk = getattr(item, "chunk", None)
             if chunk is None:
                 raise ValueError("candidate must have chunk")
-            texts.append(chunk.content) 
+            texts.append(chunk.content)
 
         scores = self.provider.score(query, texts)
         if len(scores) != len(items):
             raise ValueError("reranker returned incorrect number of scores")
 
         results = []
-        for item, score in zip(items, scores): 
+        for item, score in zip(items, scores):
             chunk = item.chunk
             hybrid = item if hasattr(item, "rrf_score") else None
             results.append(

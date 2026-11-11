@@ -3,6 +3,7 @@ from .chunking import Chunk, ChunkConfig, ChunkingService
 from .dense import DenseSearchResult, DenseSearcher, VectorIndex
 from .hybrid import HybridSearchResult, HybridSearcher, reciprocal_rank_fusion
 from .ingestion import Document, DocumentIngestor
+from .pipeline import RetrievalPipeline, SearchResponse
 from .reranking import RerankedResult, Reranker, RerankerProvider, SentenceTransformerCrossEncoder
 
 __all__ = [
@@ -11,4 +12,5 @@ __all__ = [
     "VectorIndex", "DenseSearchResult", "DenseSearcher",
     "HybridSearchResult", "HybridSearcher", "reciprocal_rank_fusion",
     "RerankedResult", "Reranker", "RerankerProvider", "SentenceTransformerCrossEncoder",
+    "RetrievalPipeline", "SearchResponse",
 ]
