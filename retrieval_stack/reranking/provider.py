@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import Protocol, Sequence
 
 
-class RerankerProvider(Protocol):
+class RerankerProvider(Protocol): 
     def score(self, query: str, texts: Sequence[str]) -> list[float]: ...
 
 
